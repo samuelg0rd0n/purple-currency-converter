@@ -1,10 +1,10 @@
-import Cache from './Cache.js';
+import Cache from './Cache';
 
 class RatesCache extends Cache {
 	cachePeriod = 86400;
 	path = './data/rates.json';
 
-	get(currency) {
+	get(currency: any) {
 		const rates = this.readFile();
 		const currentTimestamp = Math.floor(Date.now() / 1000);
 
@@ -15,7 +15,7 @@ class RatesCache extends Cache {
 		return rates[currency].rates;
 	}
 
-	set(newRates) {
+	set(newRates: any) {
 		const rates = this.readFile();
 
 		rates[newRates.base] = newRates;

@@ -1,8 +1,9 @@
+import { Request, Response } from 'express';
 import axios from 'axios';
 
-import RatesCache from '../../caching/RatesCache.js';
-import * as validation from './validation.js';
-import StatsCache from '../../caching/StatsCache.js';
+import RatesCache from '../../caching/RatesCache';
+import * as validation from './validation';
+import StatsCache from '../../caching/StatsCache';
 
 const TOTAL_AMOUNT_CONVERTED_CURRENCY = 'USD';
 const OPEN_EXCHANGE_RATES_LATEST_URL = 'https://openexchangerates.org/api/latest.json';
@@ -11,7 +12,7 @@ const OPEN_EXCHANGE_RATES_APP_ID = 'bb78bc71446c4c1ea4b28d589cf9a829';
 const FIXER_LATEST_URL = 'http://data.fixer.io/api/latest';
 const FIXER_API_KEY = 'b0f095bd7e567a9e3a18b4c0f66bbc07';
 
-export async function get(req, res) {
+export async function get(req: Request, res: Response) {
 	const { from, to, amount, errors } = validation.get(req);
 
 	if (errors.length > 0) {
@@ -49,7 +50,7 @@ export async function get(req, res) {
 		}
 	}
 
-	const converted = amount * rates[to];
+	const converted = amount * rates[to as string];
 
 	StatsCache.incrementTotalNoOfRequests();
 	StatsCache.increaseTotalAmountConverted(amount * rates[TOTAL_AMOUNT_CONVERTED_CURRENCY]);
@@ -63,7 +64,7 @@ export async function get(req, res) {
 	});
 }
 
-function handleOpenExchangeRatesError(res, message) {
+function handleOpenExchangeRatesError(res: Response, message: string) {
 	return res.status(503).send({
 		errors: [{ message }]
 	});

@@ -1,8 +1,11 @@
 import fs from "fs";
+import { ICache } from '../interface/ICache';
 
-class Cache {
+class Cache implements ICache {
+	path = '';
+
 	constructor() {
-		if (this.constructor == Cache) {
+		if (this.constructor === Cache) {
 			throw new Error("Abstract classes can't be instantiated.");
 		}
 	}
@@ -22,7 +25,7 @@ class Cache {
 		}
 	}
 
-	writeFile(content) {
+	writeFile(content: any) {
 		fs.writeFileSync(this.path, JSON.stringify(content));
 	}
 }

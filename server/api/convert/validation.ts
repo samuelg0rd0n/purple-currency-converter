@@ -1,7 +1,10 @@
-import currencies from './currencies.json';
+import { Request } from 'express';
+import currenciesJson from './currencies.json';
 
-export function get(req) {
-	const { from, to } = req.query;
+export function get(req: Request) {
+	const from = req.query.from as string;
+	const to = req.query.from as string;
+	const currencies = currenciesJson as { [key:string]: string };
 
 	const errors = [];
 
@@ -19,7 +22,7 @@ export function get(req) {
 		});
 	}
 
-	const amount = parseFloat(req.query.amount);
+	const amount = parseFloat(req.query.amount as string);
 	if (!amount || !Number.isSafeInteger(amount) || amount <= 0) {
 		errors.push({
 			param: 'amount',

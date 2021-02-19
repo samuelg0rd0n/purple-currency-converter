@@ -1,4 +1,4 @@
-import Cache from './Cache.js';
+import Cache from './Cache';
 
 const TOTAL_NO_OF_REQUESTS = 'totalNoOfRequests';
 const TOTAL_AMOUNT_CONVERTED = 'totalAmountConverted';
@@ -8,7 +8,7 @@ const MOST_POPULAR_DEST_CURRENCY = 'mostPopularDestCurrency';
 class StatsCache extends Cache {
 	path = './data/stats.json';
 
-	getMostPopularDestinationCurrency(currencies) {
+	getMostPopularDestinationCurrency(currencies: { [key:string]: string }) {
 		return Object.keys(currencies).reduce((a, b) => currencies[a] > currencies[b] ? a : b);
 	}
 
@@ -27,7 +27,7 @@ class StatsCache extends Cache {
 		return stats[TOTAL_NO_OF_REQUESTS];
 	}
 
-	increaseTotalAmountConverted(amount) {
+	increaseTotalAmountConverted(amount: number) {
 		const stats = this.readFile();
 
 		if (!stats[TOTAL_AMOUNT_CONVERTED]) {
@@ -42,7 +42,7 @@ class StatsCache extends Cache {
 		return stats[TOTAL_AMOUNT_CONVERTED];
 	}
 
-	updateTotalNoOfRequestsByDestCurrency(currency) {
+	updateTotalNoOfRequestsByDestCurrency(currency: string) {
 		const stats = this.readFile();
 
 		if (!stats[TOTAL_NO_OF_REQUESTS_BY_DEST_CURRENCY]) {

@@ -7,7 +7,7 @@ import express from 'express';
 
 // import Homepage from '../src/pages/Homepage';
 
-import api from './api/index.js';
+import api from './api';
 
 const PORT = process.env.PORT || 3006;
 const app = express();
