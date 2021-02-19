@@ -1,5 +1,5 @@
-import * as stats from '../../modules/stats.js';
+import StatsCache from '../../caching/StatsCache.js';
 
 export function get(req, res) {
-	res.send(stats.getStats());
+	res.send(StatsCache.get());
 }

@@ -28,8 +28,8 @@ export function get(req) {
 	}
 
 	return {
-		from: from.toUpperCase(),
-		to: to.toUpperCase(),
+		from: from ? from.toUpperCase() : null,
+		to: to ? to.toUpperCase() : null,
 		amount,
 		errors
 	};
