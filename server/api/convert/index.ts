@@ -13,20 +13,20 @@ const FIXER_LATEST_URL = 'http://data.fixer.io/api/latest';
 const FIXER_API_KEY = 'b0f095bd7e567a9e3a18b4c0f66bbc07';
 
 export async function get(req: Request, res: Response) {
-	const { from, to, amount, errors } = validation.get(req);
+	const validatedParams = validation.get(req);
 
-	if (errors.length > 0) {
-		return res.status(400).send({ errors });
+	if (validatedParams.errors) {
+		return res.status(400).send({ errors: validatedParams.errors });
 	}
 
-	let rates = RatesCache.get(from);
+	let rates = RatesCache.get(validatedParams.from);
 
 	if (!rates) {
 		try {
 			const response = await axios.get(FIXER_LATEST_URL, {
 				params: {
 					access_key: FIXER_API_KEY,
-					base: from,
+					base: validatedParams.from,
 				}
 			});
 
@@ -50,16 +50,16 @@ export async function get(req: Request, res: Response) {
 		}
 	}
 
-	const converted = amount * rates[to as string];
+	const converted = validatedParams.amount * rates[validatedParams.to];
 
 	StatsCache.incrementTotalNoOfRequests();
-	StatsCache.increaseTotalAmountConverted(amount * rates[TOTAL_AMOUNT_CONVERTED_CURRENCY]);
-	StatsCache.updateTotalNoOfRequestsByDestCurrency(to);
+	StatsCache.increaseTotalAmountConverted(validatedParams.amount * rates[TOTAL_AMOUNT_CONVERTED_CURRENCY]);
+	StatsCache.updateTotalNoOfRequestsByDestCurrency(validatedParams.to);
 
 	return res.send({
-		from,
-		to,
-		amount,
+		from: validatedParams.from,
+		to: validatedParams.to,
+		amount: validatedParams.amount,
 		converted,
 	});
 }

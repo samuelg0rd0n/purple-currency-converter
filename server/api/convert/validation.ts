@@ -30,10 +30,13 @@ export function get(req: Request) {
 		})
 	}
 
+	if (errors.length > 0) {
+		return { errors };
+	}
+
 	return {
-		from: from ? from.toUpperCase() : null,
-		to: to ? to.toUpperCase() : null,
-		amount,
-		errors
+		from: from.toUpperCase(),
+		to: to.toUpperCase(),
+		amount
 	};
 }
