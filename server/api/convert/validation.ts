@@ -1,9 +1,9 @@
 import { Request } from 'express';
-import currenciesJson from './currencies.json';
+import currenciesJson from '../../../src/enums/currencies.json';
 
 export function get(req: Request) {
 	const from = req.query.from as string;
-	const to = req.query.from as string;
+	const to = req.query.to as string;
 	const currencies = currenciesJson as { [key:string]: string };
 
 	const errors = [];

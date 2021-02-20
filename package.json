@@ -19,6 +19,8 @@
     "bootstrap": "^4.6.0",
     "css-loader": "^5.0.2",
     "express": "^4.17.1",
+    "file-loader": "^6.2.0",
+    "formik": "^2.2.6",
     "isomorphic-style-loader": "^5.1.0",
     "node-sass": "^5.0.0",
     "nodemon": "^2.0.7",
@@ -32,17 +34,18 @@
     "typescript": "^4.1.5",
     "web-vitals": "^1.0.1",
     "webpack-cli": "^4.5.0",
-    "webpack-node-externals": "^2.5.2"
+    "webpack-node-externals": "^2.5.2",
+    "yup": "^0.32.9"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server:build": "NODE_ENV=development webpack --config webpack.server.js --mode=development",
+    "server:build": "NODE_ENV=development webpack --config server/webpack.config.js --mode=development",
     "server:start-build": "nodemon ./server-build/index.js",
     "server": "npm-run-all --parallel build server:*",
-    "server:nodemon": "nodemon server/index.ts"
+    "server:nodemon": "nodemon --exec 'ts-node' -e ts,tsx --project ./server/tsconfig.json server/index.ts"
   },
   "eslintConfig": {
     "extends": [
@@ -61,5 +64,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://localhost:3006"
 }

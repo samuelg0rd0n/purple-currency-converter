@@ -2,7 +2,7 @@ const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-	entry: './server/index.js',
+	entry: './server/index.ts',
 
 	target: 'node',
 
@@ -27,7 +27,8 @@ module.exports = {
 					options: {
 						compilerOptions: {
 							"noEmit": false
-						}
+						},
+						configFile: "server/tsconfig.json"
 					},
 				}],
 			},
@@ -69,6 +70,14 @@ module.exports = {
 					'sass-loader',
 				],
 				exclude: /\.module\.s[ac]ss$/
+			},
+			{
+				test: /\.(png|jpg|jpeg|webp|gif)$/i,
+				use: [
+					{
+						loader: 'file-loader',
+					},
+				],
 			},
 		]
 	}

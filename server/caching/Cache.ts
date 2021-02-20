@@ -1,5 +1,5 @@
 import fs from "fs";
-import { ICache } from '../interface/ICache';
+import { ICache } from './ICache';
 
 class Cache implements ICache {
 	path = '';

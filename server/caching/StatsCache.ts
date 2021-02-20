@@ -1,4 +1,5 @@
 import Cache from './Cache';
+import { IStats } from './IStats';
 
 const TOTAL_NO_OF_REQUESTS = 'totalNoOfRequests';
 const TOTAL_AMOUNT_CONVERTED = 'totalAmountConverted';
@@ -8,11 +9,11 @@ const MOST_POPULAR_DEST_CURRENCY = 'mostPopularDestCurrency';
 class StatsCache extends Cache {
 	path = './data/stats.json';
 
-	getMostPopularDestinationCurrency(currencies: { [key:string]: string }) {
+	getMostPopularDestinationCurrency(currencies: { [key:string]: string }): string {
 		return Object.keys(currencies).reduce((a, b) => currencies[a] > currencies[b] ? a : b);
 	}
 
-	incrementTotalNoOfRequests() {
+	incrementTotalNoOfRequests(): number {
 		const stats = this.readFile();
 
 		if (!stats[TOTAL_NO_OF_REQUESTS]) {
@@ -27,7 +28,7 @@ class StatsCache extends Cache {
 		return stats[TOTAL_NO_OF_REQUESTS];
 	}
 
-	increaseTotalAmountConverted(amount: number) {
+	increaseTotalAmountConverted(amount: number): number {
 		const stats = this.readFile();
 
 		if (!stats[TOTAL_AMOUNT_CONVERTED]) {
@@ -42,7 +43,7 @@ class StatsCache extends Cache {
 		return stats[TOTAL_AMOUNT_CONVERTED];
 	}
 
-	updateTotalNoOfRequestsByDestCurrency(currency: string) {
+	updateTotalNoOfRequestsByDestCurrency(currency: string): number {
 		const stats = this.readFile();
 
 		if (!stats[TOTAL_NO_OF_REQUESTS_BY_DEST_CURRENCY]) {
@@ -61,14 +62,14 @@ class StatsCache extends Cache {
 		return stats[TOTAL_NO_OF_REQUESTS_BY_DEST_CURRENCY];
 	}
 
-	get() {
+	get(): IStats {
 		const stats = this.readFile();
 
-		const totalNoOfRequests = stats[TOTAL_NO_OF_REQUESTS] ?? null;
-		const totalAmountConverted = stats[TOTAL_AMOUNT_CONVERTED] ?? null;
+		const totalNoOfRequests = stats[TOTAL_NO_OF_REQUESTS];
+		const totalAmountConverted = Math.round( stats[TOTAL_AMOUNT_CONVERTED] * 100 + Number.EPSILON ) / 100;
 		const mostPopularDestCurrency = stats[TOTAL_NO_OF_REQUESTS_BY_DEST_CURRENCY]
 			? this.getMostPopularDestinationCurrency(stats[TOTAL_NO_OF_REQUESTS_BY_DEST_CURRENCY])
-			: null;
+			: undefined;
 
 		return {
 			[TOTAL_NO_OF_REQUESTS]: totalNoOfRequests,
