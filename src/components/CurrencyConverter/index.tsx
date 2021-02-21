@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { Field, Formik, FormikHelpers } from 'formik';
+import axios, { AxiosResponse } from 'axios';
+import { Field, Formik } from 'formik';
 
 import CurrencySelect from './CurrencySelect';
 import { ICurrencyConverter } from './ICurrencyConverter';
@@ -8,7 +8,7 @@ import initialValues from './initialValues';
 import validationSchema from './validationSchema';
 import { IStats } from '../../../server/caching/IStats';
 import { roundNumber } from './helpers';
-import { IConvertGetResponse } from '../../../server/api/convert/IConvertGetResponse';
+import { IConvertGetResponse } from '../../../server/api/endpoints/convert/IConvertGetResponse';
 import { IApiError } from '../../../server/api/interfaces/IApiError';
 
 type Props = {
@@ -20,7 +20,7 @@ const CurrencyConvertor = (props: Props) => {
 	const [ convertedCurrency, setConvertedCurrency ] = useState<string|undefined>(undefined);
 	const [ apiErrors, setApiErrors ] = useState<Array<IApiError>>([]);
 
-	const onSubmit = async (values: ICurrencyConverter, helpers: FormikHelpers<ICurrencyConverter>) => {
+	const onSubmit = async (values: ICurrencyConverter) => {
 		setApiErrors([]);
 
 		try {
@@ -90,8 +90,18 @@ const CurrencyConvertor = (props: Props) => {
 							<button
 								type="submit"
 								className="btn btn-secondary btn-lg form-group w-100"
+								disabled={formik.isSubmitting}
+								style={{ minWidth: '140px' }}
 							>
-								Convert 👇
+								{formik.isSubmitting ?
+									<div className="spinner">
+										<div className="bounce1" />
+										<div className="bounce2" />
+										<div className="bounce3" />
+									</div>
+									:
+									<span>Convert 👇</span>
+								}
 							</button>
 						</div>
 					</div>

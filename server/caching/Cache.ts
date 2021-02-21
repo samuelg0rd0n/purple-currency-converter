@@ -10,6 +10,12 @@ class Cache implements ICache {
 		}
 	}
 
+	removeFilenameFromPath(path: string) {
+		const arr = path.split('/');
+		arr.pop();
+		return arr.join('/');
+	}
+
 	readFile() {
 		if (!fs.existsSync(this.path)) {
 			return {};
@@ -26,6 +32,11 @@ class Cache implements ICache {
 	}
 
 	writeFile(content: any) {
+		const path = this.removeFilenameFromPath(this.path);
+		if (!fs.existsSync(path)) {
+			fs.mkdirSync(path, { recursive: true });
+		}
+
 		fs.writeFileSync(this.path, JSON.stringify(content));
 	}
 }

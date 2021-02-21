@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-import RatesCache from '../../caching/RatesCache';
+import RatesCache from '../../../caching/RatesCache';
 import * as validation from './validation';
-import StatsCache from '../../caching/StatsCache';
+import StatsCache from '../../../caching/StatsCache';
+import { IFixerGetResponse } from './IFixerGetResponse';
 
 const TOTAL_AMOUNT_CONVERTED_CURRENCY = 'USD';
 // const OPEN_EXCHANGE_RATES_LATEST_URL = 'https://openexchangerates.org/api/latest.json';
@@ -23,7 +24,7 @@ export async function get(req: Request, res: Response) {
 
 	if (!rates) {
 		try {
-			const response = await axios.get(FIXER_LATEST_URL, {
+			const response: AxiosResponse<IFixerGetResponse> = await axios.get(FIXER_LATEST_URL, {
 				params: {
 					access_key: FIXER_API_KEY,
 					base: validatedParams.from,
@@ -31,7 +32,10 @@ export async function get(req: Request, res: Response) {
 			});
 
 			if (!response || !response.data || !response.data.rates) {
-				return handleFixerApiError(res, response.data.error?.info ?? 'Data provider sent unexpected data.');
+				const message = response.data.error
+					? `An error occurred at data provider, code: ${response.data.error.code}, type: ${response.data.error.type}.`
+					: 'Data provider sent unexpected data.'
+				return handleFixerApiError(res, message);
 			}
 
 			rates = response.data.rates;

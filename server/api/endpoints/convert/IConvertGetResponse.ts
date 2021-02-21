@@ -1,4 +1,4 @@
-import { IStats } from '../../caching/IStats';
+import { IStats } from '../../../caching/IStats';
 
 export interface IConvertGetResponse {
 	from: string,

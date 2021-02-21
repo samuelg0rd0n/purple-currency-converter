@@ -1,2 +1,8 @@
 @import 'variables';
 @import '~bootstrap/scss/bootstrap';
+
+@import 'loader';
+
+strong {
+	font-weight: $font-weight-bold;
+}

@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import currenciesJson from '../../../src/enums/currencies.json';
+import currenciesJson from '../../../../src/enums/currencies.json';
 
 export function get(req: Request) {
 	const from = req.query.from as string;
@@ -23,7 +23,7 @@ export function get(req: Request) {
 	}
 
 	const amount = parseFloat(req.query.amount as string);
-	if (!amount || !Number.isSafeInteger(amount) || amount <= 0) {
+	if (!amount || amount <= 0) {
 		errors.push({
 			param: 'amount',
 			message: 'Parameter `amount` is missing or is not a valid number greater than zero.'

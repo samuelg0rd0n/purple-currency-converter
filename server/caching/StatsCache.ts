@@ -65,11 +65,13 @@ class StatsCache extends Cache {
 	get(): IStats {
 		const stats = this.readFile();
 
-		const totalNoOfRequests = stats[TOTAL_NO_OF_REQUESTS];
-		const totalAmountConverted = Math.round( stats[TOTAL_AMOUNT_CONVERTED] * 100 + Number.EPSILON ) / 100;
+		const totalNoOfRequests = stats[TOTAL_NO_OF_REQUESTS] || 0;
+		const totalAmountConverted = stats[TOTAL_AMOUNT_CONVERTED]
+			? Math.round( stats[TOTAL_AMOUNT_CONVERTED] * 100 + Number.EPSILON ) / 100
+			: 0;
 		const mostPopularDestCurrency = stats[TOTAL_NO_OF_REQUESTS_BY_DEST_CURRENCY]
 			? this.getMostPopularDestinationCurrency(stats[TOTAL_NO_OF_REQUESTS_BY_DEST_CURRENCY])
-			: undefined;
+			: null;
 
 		return {
 			[TOTAL_NO_OF_REQUESTS]: totalNoOfRequests,

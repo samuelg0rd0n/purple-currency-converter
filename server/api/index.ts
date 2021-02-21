@@ -1,5 +1,5 @@
-import * as convert from './convert';
-import * as stats from './stats'
+import * as convert from './endpoints/convert';
+import * as stats from './endpoints/stats'
 
 export default {
 	convert,
