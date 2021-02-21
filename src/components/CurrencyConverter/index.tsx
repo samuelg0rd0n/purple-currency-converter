@@ -45,7 +45,7 @@ const CurrencyConvertor = (props: Props) => {
 				setApiErrors(err.response.data.errors);
 			} else {
 				setApiErrors([{
-					message: err.response ? err.response.statusText : 'Unexpected response from server.'
+					message: err.response ? err.response.statusText : err.message
 				}]);
 			}
 		}
