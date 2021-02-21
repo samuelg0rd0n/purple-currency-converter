@@ -6,8 +6,8 @@ import * as validation from './validation';
 import StatsCache from '../../caching/StatsCache';
 
 const TOTAL_AMOUNT_CONVERTED_CURRENCY = 'USD';
-const OPEN_EXCHANGE_RATES_LATEST_URL = 'https://openexchangerates.org/api/latest.json';
-const OPEN_EXCHANGE_RATES_APP_ID = 'bb78bc71446c4c1ea4b28d589cf9a829';
+// const OPEN_EXCHANGE_RATES_LATEST_URL = 'https://openexchangerates.org/api/latest.json';
+// const OPEN_EXCHANGE_RATES_APP_ID = 'bb78bc71446c4c1ea4b28d589cf9a829';
 
 const FIXER_LATEST_URL = 'http://data.fixer.io/api/latest';
 const FIXER_API_KEY = 'b0f095bd7e567a9e3a18b4c0f66bbc07';
@@ -31,7 +31,7 @@ export async function get(req: Request, res: Response) {
 			});
 
 			if (!response || !response.data || !response.data.rates) {
-				return handleOpenExchangeRatesError(res, response.data.error?.info ?? 'Data provider sent unexpected data.');
+				return handleFixerApiError(res, response.data.error?.info ?? 'Data provider sent unexpected data.');
 			}
 
 			rates = response.data.rates;
@@ -39,13 +39,13 @@ export async function get(req: Request, res: Response) {
 
 		} catch (err) {
 			if (err.response && err.response.data && err.response.data.error && err.response.data.description) {
-				return handleOpenExchangeRatesError(res, err.response.data.description);
+				return handleFixerApiError(res, err.response.data.description);
 
 			} else if (err.request) {
-				return handleOpenExchangeRatesError(res, 'No response received from the data provider.');
+				return handleFixerApiError(res, 'No response received from the data provider.');
 
 			} else {
-				return handleOpenExchangeRatesError(res, err.message);
+				return handleFixerApiError(res, err.message);
 			}
 		}
 	}
@@ -56,15 +56,18 @@ export async function get(req: Request, res: Response) {
 	StatsCache.increaseTotalAmountConverted(validatedParams.amount * rates[TOTAL_AMOUNT_CONVERTED_CURRENCY]);
 	StatsCache.updateTotalNoOfRequestsByDestCurrency(validatedParams.to);
 
+	const stats = StatsCache.get();
+
 	return res.send({
 		from: validatedParams.from,
 		to: validatedParams.to,
 		amount: validatedParams.amount,
 		converted,
+		stats,
 	});
 }
 
-function handleOpenExchangeRatesError(res: Response, message: string) {
+function handleFixerApiError(res: Response, message: string) {
 	return res.status(503).send({
 		errors: [{ message }]
 	});

@@ -8,14 +8,14 @@ export function get(req: Request) {
 
 	const errors = [];
 
-	if (!from || typeof from !== 'string' || !currencies[from.toUpperCase()]) {
+	if (!from || !currencies[from.toUpperCase()]) {
 		errors.push({
 			param: 'from',
 			message: 'Parameter `from` is missing or is not a valid currency.'
 		});
 	}
 
-	if (!to || typeof to !== 'string' || !currencies[to.toUpperCase()]) {
+	if (!to || !currencies[to.toUpperCase()]) {
 		errors.push({
 			param: 'to',
 			message: 'Parameter `to` is missing or is not a valid currency.'

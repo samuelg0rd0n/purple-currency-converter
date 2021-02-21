@@ -1,19 +1,30 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { Dispatch, SetStateAction, useState } from 'react';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { Field, Formik, FormikHelpers } from 'formik';
 
 import CurrencySelect from './CurrencySelect';
 import { ICurrencyConverter } from './ICurrencyConverter';
 import initialValues from './initialValues';
 import validationSchema from './validationSchema';
+import { IStats } from '../../../server/caching/IStats';
+import { roundNumber } from './helpers';
+import { IConvertGetResponse } from '../../../server/api/convert/IConvertGetResponse';
+import { IApiError } from '../../../server/api/interfaces/IApiError';
 
-const CurrencyConvertor = () => {
+type Props = {
+	setStats: Dispatch<SetStateAction<IStats|undefined>>,
+}
 
-	const [ converted, setConverted ] = useState(undefined);
+const CurrencyConvertor = (props: Props) => {
+	const [ converted, setConverted ] = useState<number|undefined>(undefined);
+	const [ convertedCurrency, setConvertedCurrency ] = useState<string|undefined>(undefined);
+	const [ apiErrors, setApiErrors ] = useState<Array<IApiError>>([]);
 
 	const onSubmit = async (values: ICurrencyConverter, helpers: FormikHelpers<ICurrencyConverter>) => {
+		setApiErrors([]);
+
 		try {
-			const response = await axios.get('/api/convert', {
+			const response: AxiosResponse<IConvertGetResponse> = await axios.get('/api/convert', {
 				params: {
 					from: values.fromCurrency,
 					to: values.toCurrency,
@@ -23,10 +34,20 @@ const CurrencyConvertor = () => {
 
 			if (response && response.data) {
 				setConverted(response.data.converted);
+				setConvertedCurrency(response.data.to);
+				props.setStats(response.data.stats);
 			}
 
 		} catch (err) {
 			console.error(err);
+
+			if (err.response && err.response.data && err.response.data.errors) {
+				setApiErrors(err.response.data.errors);
+			} else {
+				setApiErrors([{
+					message: err.response ? err.response.statusText : 'Unexpected response from server.'
+				}]);
+			}
 		}
 	};
 
@@ -79,9 +100,13 @@ const CurrencyConvertor = () => {
 						<div className="alert alert-danger">{formik.errors.fromAmount}</div>
 					}
 
+					{apiErrors.map((error, index) => (
+						<div className="alert alert-danger" key={index}>{error.message}</div>
+					))}
+
 					{!!converted &&
-					<div className="text-center text-white display-4">
-						<strong>{converted}</strong> {formik.values.toCurrency}
+					<div className="text-center text-secondary display-4 mt-4">
+						<strong className="font-weight-bold">{roundNumber(converted)}</strong> {convertedCurrency}
 					</div>
 					}
 				</form>
